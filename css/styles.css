@@ -1,0 +1,259 @@
+:root {
+    --border: #000;
+    --text: #111;
+    --muted: #555;
+    --page-width: 960px;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    margin: 0;
+    padding: 0;
+    background: #f2f2f2;
+    color: var(--text);
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 14px;
+    line-height: 1.35;
+    user-select: none;
+}
+
+body {
+    padding: 24px 12px;
+}
+
+
+.security-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 999999;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    background: #000;
+    color: #fff;
+    text-align: center;
+    padding: 2rem;
+}
+
+.security-overlay.active {
+    display: flex;
+}
+
+.security-box {
+    max-width: 520px;
+    border: 1px solid #444;
+    padding: 2rem;
+    border-radius: 1rem;
+    background: #111;
+}
+
+body.content-hidden main,
+body.content-hidden header,
+body.content-hidden section,
+body.content-hidden article {
+    filter: blur(12px);
+    pointer-events: none;
+    user-select: none;
+}
+
+
+.page {
+    max-width: var(--page-width);
+    margin: 0 auto;
+    background: #fff;
+    padding: 22px;
+    border: 1px solid #ddd;
+    box-shadow: 0 2px 14px rgba(0, 0, 0, .08);
+}
+
+.guide-table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+    border: 1px solid var(--border);
+}
+
+.guide-table td,
+.guide-table th {
+    border: 1px solid var(--border);
+    padding: 7px 8px;
+    vertical-align: top;
+}
+
+.logo-cell {
+    width: 18%;
+    height: 54px;
+    text-align: center;
+    vertical-align: middle !important;
+    font-weight: 700;
+}
+
+.logo-placeholder {
+    width: 140px;
+    height: 38px;
+    border: 1px solid #999;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    color: #444;
+}
+
+.logo-cell {
+    text-align: center;
+    vertical-align: middle;
+}
+
+.logo-img {
+    height: 40px;
+    max-width: 100%;
+    object-fit: contain;
+}
+
+.title-cell {
+    text-align: center;
+    font-weight: 700;
+    vertical-align: middle !important;
+    font-size: 14px;
+}
+
+.center {
+    text-align: center;
+}
+
+.bold {
+    font-weight: 700;
+}
+
+.section-label {
+    width: 18%;
+    font-weight: 700;
+    text-align: left;
+    vertical-align: middle !important;
+}
+
+.section-content {
+    width: 82%;
+}
+
+.small {
+    font-size: 12px;
+}
+
+.muted {
+    color: var(--muted);
+}
+
+ol,
+ul {
+    margin-top: 4px;
+    margin-bottom: 6px;
+    padding-left: 22px;
+}
+
+li {
+    margin: 2px 0;
+}
+
+h3,
+h4 {
+    margin: 8px 0 4px;
+    font-size: 14px;
+}
+
+.rubric {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 8px;
+    font-size: 13px;
+}
+
+.rubric th,
+.rubric td {
+    border: 1px solid var(--border);
+    padding: 5px 6px;
+}
+
+.rubric th {
+    text-align: center;
+    font-weight: 700;
+    background: #f5f5f5;
+}
+
+.rubric .subtotal td {
+    font-weight: 700;
+}
+
+code {
+    font-family: "Courier New", Consolas, monospace;
+    font-size: 13px;
+}
+
+.code-line {
+    display: block;
+    font-family: "Courier New", Consolas, monospace;
+    background: #f7f7f7;
+    border: 1px solid #bbb;
+    padding: 6px 8px;
+    margin: 6px 0;
+    white-space: pre-wrap;
+}
+
+.console {
+    background: #08101f;
+    color: #d8e86f;
+    border: 1px solid #111;
+    padding: 12px 14px;
+    margin: 8px 0 14px;
+    font-family: "Courier New", Consolas, monospace;
+    font-size: 12px;
+    line-height: 1.25;
+    white-space: pre;
+    overflow-x: auto;
+    user-select: none;
+}
+
+.console .orange {
+    color: #ff9b45;
+    font-weight: 700;
+}
+
+.console .cyan {
+    color: #8ed0ff;
+}
+
+.footer {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 16px;
+    font-family: "Times New Roman", serif;
+    font-size: 12px;
+}
+
+.signature {
+    margin-top: 22px;
+}
+
+@media print {
+    body {
+        background: white;
+        padding: 0;
+    }
+
+    .page {
+        max-width: none;
+        margin: 0;
+        padding: 0;
+        border: none;
+        box-shadow: none;
+    }
+
+    .console {
+        white-space: pre-wrap;
+        overflow: visible;
+    }
+}

@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    />
+    <title>Evaluación Técnica – Angular</title>
+    <link
+        rel="stylesheet"
+        href="../css/styles.css"
+    >
+    <style>
+        .eva-header {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            border: 1px solid var(--border);
+            padding: 14px 18px;
+            margin-bottom: 20px;
+            background: #fafafa;
+        }
+
+        .eva-header .header-info h1 {
+            margin: 0 0 3px;
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .eva-header .header-info p {
+            margin: 2px 0;
+            font-size: 13px;
+            color: var(--muted);
+        }
+
+        .section {
+            margin-bottom: 22px;
+        }
+
+        .section>h2 {
+            font-size: 14px;
+            font-weight: 700;
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 4px;
+            margin: 0 0 10px;
+        }
+
+        .section>h4,
+        .section h4 {
+            margin: 10px 0 4px;
+            font-size: 13px;
+        }
+
+        .card {
+            border: 1px solid #ccc;
+            border-left: 4px solid #555;
+            padding: 9px 13px;
+            margin: 7px 0;
+            font-size: 13px;
+        }
+
+        .card h4 {
+            margin: 0 0 5px;
+            font-size: 13px;
+        }
+
+        .card.info {
+            border-left-color: #2563eb;
+            background: #eff6ff;
+        }
+
+        .card.warn {
+            border-left-color: #d97706;
+            background: #fffbeb;
+        }
+
+        .card.req {
+            border-left-color: #059669;
+            background: #f0fdf4;
+        }
+
+        .card.neutral {
+            border-left-color: #555;
+            background: #f7f7f7;
+        }
+
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 8px;
+            margin: 8px 0;
+        }
+
+        .card-grid .card {
+            margin: 0;
+        }
+
+        .two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin: 8px 0;
+        }
+
+        .two-col .card {
+            margin: 0;
+        }
+
+        .ref-image {
+            border: 1px solid #ccc;
+            max-width: 100%;
+            display: block;
+            margin: 10px auto;
+        }
+
+        .rubric {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+            margin-top: 10px;
+        }
+
+        .rubric th,
+        .rubric td {
+            border: 1px solid var(--border);
+            padding: 5px 7px;
+            vertical-align: top;
+        }
+
+        .rubric th {
+            background: #f0f0f0;
+            font-weight: 700;
+            text-align: center;
+        }
+
+        .rubric td:nth-child(2) {
+            text-align: center;
+            white-space: nowrap;
+            font-weight: 700;
+        }
+
+        .rubric .total-row td {
+            font-weight: 700;
+            background: #f0f0f0;
+        }
+
+        @media (max-width: 640px) {
+            .two-col {
+                grid-template-columns: 1fr;
+            }
+
+            .card-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media print {
+            .card {
+                break-inside: avoid;
+            }
+
+            .section {
+                break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <main
+        class="page"
+        id="practice-content"
+    >
+
+        <!-- ENCABEZADO -->
+        <div class="eva-header">
+            <div>
+                <img
+                    src="../assets/ups-svg-plain.svg"
+                    alt="UPS"
+                    class="logo-img"
+                >
+            </div>
+            <div class="header-info">
+                <h1>EVALUACIÓN TÉCNICA – Angular, Servicios, Señales, Navegación y Consumo de APIs</h1>
+                <p><strong>Asignatura:</strong> Programación y Plataformas Web</p>
+                <p>
+                    <strong>Carrera:</strong> Computación &nbsp;|&nbsp;
+                    <strong>Docente:</strong> Ing. Pablo Torres &nbsp;|&nbsp;
+                    <strong>Universidad Politécnica Salesiana</strong>
+                </p>
+            </div>
+        </div>
+
+        <!-- 1. INTRODUCCIÓN -->
+        <div class="section">
+            <h2>1. Introducción</h2>
+            <p>
+                Desarrollo de una aplicación funcional que consuma información desde una API externa, presente los datos
+                mediante componentes visuales reutilizables y permita navegar hacia una página de detalle, aplicando
+                buenas prácticas de organización, rendimiento, estructura semántica y experiencia de usuario.
+            </p>
+            <div class="card warn">
+                <h4>⚠ Requisito de entrega</h4>
+                El repositorio entregado debe poder <strong>clonarse, instalarse y ejecutarse directamente</strong> sin
+                errores.
+            </div>
+        </div>
+
+        <!-- 2. OBJETIVOS -->
+        <div class="section">
+            <h2>2. Objetivos de la Evaluación</h2>
+            <div class="card-grid">
+                <div class="card neutral">Implementar una aplicación Angular organizada por páginas, componentes,
+                    servicios e interfaces.</div>
+                <div class="card neutral">Consumir datos desde una API externa mediante un servicio reutilizable.</div>
+                <div class="card neutral">Definir interfaces TypeScript para mapear correctamente las respuestas del
+                    API.</div>
+                <div class="card neutral">Utilizar señales para manejar estados visibles de la interfaz.</div>
+                <div class="card neutral">Implementar navegación mediante rutas dinámicas hacia una página de detalle.
+                </div>
+                <div class="card neutral">Diseñar componentes reutilizables para mostrar información en formato de
+                    tarjeta.</div>
+                <div class="card neutral">Aplicar almacenamiento local para guardar registros consultados
+                    individualmente.</div>
+                <div class="card neutral">Incorporar estados de carga mediante un spinner o indicador visual.</div>
+                <div class="card neutral">Aplicar estilos responsivos con TailwindCSS y DaisyUI.</div>
+                <div class="card neutral">Mantener una estructura de proyecto clara, semántica y técnicamente correcta.
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. INDICACIONES GENERALES -->
+        <div class="section">
+            <h2>3. Indicaciones Generales</h2>
+            <p>
+                La aplicación deberá consumir información desde una API pública asignada durante la evaluación.
+                La API proporcionará un listado de registros y un endpoint de consulta individual por identificador.
+            </p>
+            <p>
+                Se deberá crear una solución general, organizada y reutilizable, evitando depender de datos quemados
+                para mostrar la información principal.
+            </p>
+            <div class="card req">
+                <h4>La aplicación debe contener como mínimo:</h4>
+                <ul>
+                    <li>Un servicio Angular para consumir la API.</li>
+                    <li>Dos métodos principales en el servicio:
+                        <ul>
+                            <li>Un método para obtener el listado de registros.</li>
+                            <li>Un método para obtener el detalle de un registro por identificador.</li>
+                        </ul>
+                    </li>
+                    <li>Interfaces TypeScript para representar la respuesta del listado y el detalle.</li>
+                    <li>Una página principal para mostrar los registros.</li>
+                    <li>Una página de detalle para mostrar información ampliada.</li>
+                    <li>Un componente reutilizable tipo card.</li>
+                    <li>Un componente header.</li>
+                    <li>Un componente footer.</li>
+                    <li>Layout de la página <strong>no debe redibujar</strong> header ni footer.</li>
+                    <li>Manejo de loading antes de mostrar la información.</li>
+                    <li>Almacenamiento en <code>localStorage</code> de cada registro consultado en la página de detalle.
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- 4. REQUERIMIENTOS TÉCNICOS -->
+        <div class="section">
+            <h2>4. Requerimientos Técnicos Globales</h2>
+            <div class="two-col">
+                <div class="card info">
+                    <h4>Tecnologías requeridas</h4>
+                    <ul>
+                        <li>Angular versión 20 o superior.</li>
+                        <li>Componentes standalone.</li>
+                        <li>Uso de routing.</li>
+                        <li>Uso de <code>HttpClient</code>.</li>
+                        <li>Uso de TailwindCSS.</li>
+                        <li>Uso de DaisyUI.</li>
+                    </ul>
+                </div>
+                <div class="card req">
+                    <h4>Prácticas obligatorias</h4>
+                    <ul>
+                        <li>Uso obligatorio de servicios.</li>
+                        <li>Uso obligatorio de interfaces TypeScript.</li>
+                        <li>Señales para: total de elementos y estado de carga.</li>
+                        <li>Uso de directivas modernas.</li>
+                        <li>Estructura semántica HTML.</li>
+                        <li>Diseño responsivo.</li>
+                        <li>Código organizado por carpetas.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- 5. ESTRUCTURA -->
+        <div class="section">
+            <h2>5. Estructura Mínima del Proyecto</h2>
+            <p>
+                La estructura puede variar según el criterio técnico de cada uno, pero debe mantener separación clara
+                de responsabilidades y una arquitectura modular según la especificación.
+            </p>
+            <div class="card warn">
+                Puede usar otra organización, siempre que se evidencie una
+                <strong>arquitectura limpia, modular y coherente</strong>.
+            </div>
+        </div>
+
+        <!-- IMAGEN REFERENCIAL -->
+        <div class="section">
+            <h2>Imagen Referencial – Layout General de la Aplicación</h2>
+            <img
+                src="../assets/01-eva-1.png"
+                alt="Layout referencial de la aplicación Angular"
+                class="ref-image"
+            >
+        </div>
+
+        <!-- 6. HEADER -->
+        <div class="section">
+            <h2>6. Header de la Aplicación</h2>
+            <p>La aplicación deberá incluir un componente <code>HeaderComponent</code>.</p>
+            <div class="two-col">
+                <div class="card req">
+                    <h4>Contenido mínimo</h4>
+                    <ul>
+                        <li>Nombre de la asignatura.</li>
+                        <li>Nombre de la evaluación.</li>
+                        <li>Nombre completo.</li>
+                        <li>Carrera.</li>
+                        <li>Enlace al repositorio de GitHub (funcional).</li>
+                        <li>Componente (botón/div/p) que navegue hacia la página principal.</li>
+                    </ul>
+                </div>
+                <div class="card info">
+                    <h4>Requerimientos visuales mínimos</h4>
+                    <ul>
+                        <li>Estilos con TailwindCSS y/o DaisyUI.</li>
+                        <li>Diferenciado visualmente del contenido principal.</li>
+                        <li>Buen contraste.</li>
+                        <li>Responsivo.</li>
+                        <li>Espaciado adecuado.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- 7. HERO -->
+        <div class="section">
+            <h2>7. Hero de la Aplicación</h2>
+            <p>
+                La aplicación deberá incluir un componente tipo <code>HeroComponent</code>. El hero debe ubicarse
+                en un lugar estratégico de la estructura general para evitar repetirlo innecesariamente en cada página.
+            </p>
+            <div class="card req">
+                <h4>Contenido mínimo del Hero</h4>
+                <ul>
+                    <li>Título principal de la aplicación (título del listado del API).<br>
+                        <span class="muted small">Ej: <em>Listado de personajes de los Simpsons</em></span>
+                    </li>
+                    <li>Total de elementos mostrados actualmente en la página principal.<br>
+                        <span class="muted small">Ej: <em>Total de personajes: 16</em></span>
+                    </li>
+                    <li>Estado visual relacionado con la carga de datos o la información disponible.</li>
+                </ul>
+            </div>
+
+            <h4>Comportamiento en la página principal <code>/</code> o <code>home</code></h4>
+            <p>El total debe calcularse a partir del arreglo cargado:</p>
+            <code class="code-line">totalItems = items.length;</code>
+
+            <h4>Comportamiento en la página de detalle</h4>
+            <p>El hero muestra el valor recibido mediante parámetro de consulta en la URL.</p>
+            <div class="two-col">
+                <div>
+                    <p class="bold small">URL válida</p>
+                    <code class="code-line">/detalle?id=6&amp;total=10</code>
+                    <div
+                        class="card req"
+                        style="margin-top:6px;"
+                    >
+                        Hero muestra: <code>Total de registros: 10</code>
+                    </div>
+                </div>
+                <div>
+                    <p class="bold small">URL sin parámetro total</p>
+                    <code class="code-line">/detalle?id=6</code>
+                    <div
+                        class="card warn"
+                        style="margin-top:6px;"
+                    >
+                        Hero muestra: <code>ERROR EN TOTAL</code>
+                    </div>
+                </div>
+            </div>
+
+            <h4>Recibir parámetro</h4>
+            <code class="code-line">total = input.required&lt;number&gt;();</code>
+
+            <div
+                class="card info"
+                style="margin-top:10px;"
+            >
+                <h4>Requerimientos visuales mínimos</h4>
+                <ul>
+                    <li>Composición clara.</li>
+                    <li>Estilos de TailwindCSS y/o DaisyUI.</li>
+                    <li>Adaptable a pantallas pequeñas y grandes.</li>
+                    <li>Coherencia visual con el resto de la aplicación.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- 8. SERVICIO -->
+        <div class="section">
+            <h2>8. Servicio para Consumo de API</h2>
+            <p>Deberá crear un servicio Angular encargado de consumir la API asignada. Debe contener al menos dos
+                métodos:</p>
+
+            <h4>Método – listado general</h4>
+            <code class="code-line">getItems()</code>
+            <p class="small muted">Obtiene el listado general de registros.</p>
+
+            <h4>Método – detalle por identificador</h4>
+            <code class="code-line">getItemById(id: number | string)</code>
+            <p class="small muted">Obtiene un registro específico mediante su identificador.</p>
+
+            <div class="card req">
+                <h4>Requerimientos del servicio</h4>
+                <ul>
+                    <li>Configurar URL base en variable de entorno.</li>
+                    <li>Centralizar la URL base o endpoints utilizados.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- 9. INTERFACES -->
+        <div class="section">
+            <h2>9. Interfaces TypeScript</h2>
+            <p>Deberá crear interfaces para representar la estructura de los datos consumidos desde la API.</p>
+            <div class="card req">
+                <h4>Interfaces mínimas requeridas</h4>
+                <ul>
+                    <li>Una interfaz para la respuesta del listado.</li>
+                    <li>Una interfaz para el registro individual.</li>
+                    <li>Interfaces adicionales si la respuesta contiene objetos internos o propiedades anidadas.</li>
+                </ul>
+            </div>
+            <div class="card warn">
+                No se aceptará el uso generalizado de <code>any</code> para evitar el tipado de la respuesta.
+            </div>
+        </div>
+
+        <!-- 10. PÁGINA PRINCIPAL -->
+        <div class="section">
+            <h2>10. Página Principal</h2>
+            <p>La página principal deberá consumir el listado de registros desde el servicio creado.</p>
+            <div class="two-col">
+                <div class="card req">
+                    <h4>Funcionalidades requeridas</h4>
+                    <ul>
+                        <li>Obtener los registros desde la API.</li>
+                        <li>Mostrar componente Hero.</li>
+                        <li>Mostrar estado de carga antes de renderizar las tarjetas.</li>
+                        <li>Simular un retardo mínimo de <strong>2 segundos</strong>.</li>
+                        <li>Actualizar mediante señal el total de elementos mostrados.</li>
+                        <li>Mostrar los registros en una grilla responsiva.</li>
+                        <li>Usar el componente card para cada registro.</li>
+                        <li>Manejar visualmente error o ausencia de datos.</li>
+                    </ul>
+                </div>
+                <div class="card info">
+                    <h4>Requerimientos de presentación</h4>
+                    <ul>
+                        <li>Listado dentro de una sección semántica.</li>
+                        <li>Grilla adaptable a diferentes tamaños de pantalla.</li>
+                        <li>En pantallas amplias: varias tarjetas por fila.</li>
+                        <li>En pantallas pequeñas: tarjetas reorganizadas automáticamente.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- 11. CARD -->
+        <div class="section">
+            <h2>11. Componente Card</h2>
+            <p>El componente card deberá ser reutilizable y recibirá la información de un registro mediante
+                <code>input</code>.
+            </p>
+
+            <div class="card req">
+                <h4>Contenido mínimo del card</h4>
+                <ul>
+                    <li>Imagen del registro.</li>
+                    <li>Atributo principal del registro.</li>
+                    <li>Dos o más datos complementarios.</li>
+                    <li>Acción de navegación hacia el detalle.</li>
+                </ul>
+            </div>
+
+            <h4>Manera de recibir parámetros en el componente</h4>
+            <code class="code-line">item  = input.required&lt;Item&gt;();
+total = input.required&lt;number&gt;();</code>
+            <p class="small muted">El item es el modelo interface del api.</p>
+
+            <div
+                class="two-col"
+                style="margin-top:10px;"
+            >
+                <div class="card warn">
+                    <h4>Requerimientos funcionales</h4>
+                    <ul>
+                        <li>El clic de navegación <strong>solo</strong> en la imagen y el atributo principal.</li>
+                        <li>No navegar al hacer clic sobre toda la tarjeta.</li>
+                        <li>Recibe datos desde la página principal.</li>
+                        <li>No consume directamente el servicio HTTP.</li>
+                        <li>Reutilizable también en la página de detalle.</li>
+                    </ul>
+                </div>
+                <div class="card info">
+                    <h4>Requerimientos visuales mínimos</h4>
+                    <ul>
+                        <li>Fondo diferenciado.</li>
+                        <li>Bordes o sombra.</li>
+                        <li>Efecto hover.</li>
+                        <li>Espaciado interno adecuado.</li>
+                        <li>Imagen correctamente mostrada.</li>
+                        <li>Proporciones visuales correctas.</li>
+                        <li>Adaptable a distintos tamaños de pantalla.</li>
+                        <li>Clases de TailwindCSS y/o DaisyUI.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- 12. NAVEGACIÓN -->
+        <div class="section">
+            <h2>12. Navegación hacia Detalle</h2>
+            <p>
+                Al hacer clic sobre la imagen o el atributo principal del componente card, la aplicación deberá
+                navegar hacia la página de detalle del registro seleccionado.
+            </p>
+            <div class="card req">
+                <h4>La navegación deberá enviar</h4>
+                <ul>
+                    <li>El identificador del registro seleccionado como parámetro de ruta.</li>
+                    <li>El total de registros mostrados actualmente como parámetro de consulta.</li>
+                </ul>
+            </div>
+
+            <h4>Ruta esperada</h4>
+            <code class="code-line">/details/6?total=10</code>
+            <ul>
+                <li><code>6</code> — identificador del registro seleccionado.</li>
+                <li><code>total=10</code> — total de registros mostrados actualmente en la página principal.</li>
+            </ul>
+
+            <h4>Código de navegación</h4>
+            <code class="code-line">router.navigate(['/details', 6], {
+  queryParams: { total: 10 }
+});</code>
+            <p class="small muted">Reemplazar los valores fijos por las variables correctas.</p>
+
+            <div
+                class="card info"
+                style="margin-top:10px;"
+            >
+                <h4>Requerimientos</h4>
+                <ul>
+                    <li>Ruta declarada correctamente en <code>app.routes.ts</code>.</li>
+                    <li>URL con formato <code>/details/:id?total=valor</code>.</li>
+                    <li>La página de detalle obtiene el <code>id</code> desde el parámetro de ruta.</li>
+                    <li>La página de detalle obtiene el <code>total</code> desde los query params.</li>
+                    <li>El parámetro <code>total</code> debe provenir de la navegación desde la página principal.</li>
+                    <li>No se debe pasar todo el objeto por la URL.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- 13. DETALLE -->
+        <div class="section">
+            <h2>13. Página de Detalle</h2>
+            <p>
+                La página de detalle deberá consumir el registro individual desde el servicio usando el identificador
+                recibido por la URL.
+            </p>
+
+            <h4>Formato de ruta</h4>
+            <code class="code-line">/details/:id?total=valor</code>
+
+            <div
+                class="two-col"
+                style="margin-top:8px;"
+            >
+                <div>
+                    <p class="bold small">URL válida</p>
+                    <code class="code-line">/details/6?total=10</code>
+                    <div
+                        class="card req"
+                        style="margin-top:6px;"
+                    >
+                        Hero muestra: <code>Total de registros: 10</code>
+                    </div>
+                </div>
+                <div>
+                    <p class="bold small">Sin parámetro total</p>
+                    <code class="code-line">/details/6</code>
+                    <div
+                        class="card warn"
+                        style="margin-top:6px;"
+                    >
+                        Hero muestra: <code>ERROR EN TOTAL</code>
+                    </div>
+                </div>
+            </div>
+
+            <div
+                class="card req"
+                style="margin-top:10px;"
+            >
+                <h4>La página de detalle debe mostrar como mínimo</h4>
+                <ul>
+                    <li>Hero component.</li>
+                    <li>Card component (reutilizado).</li>
+                    <li>Botón o enlace para regresar a la página principal.</li>
+                </ul>
+            </div>
+
+            <div class="card warn">
+                La página de detalle debe consumir <strong>solo el servicio <code>ItemService</code></strong>,
+                no directamente <code>localStorage</code>. Es el servicio quien verifica si existe en caché local;
+                si no existe, consume del API y luego guarda.
+            </div>
+        </div>
+
+        <!-- 14. LOCALSTORAGE -->
+        <div class="section">
+            <h2>14. Caché Local con localStorage</h2>
+            <p>
+                Al ingresar a la página de detalle, el registro consultado deberá guardarse en
+                <code>localStorage</code>.
+                Cada registro debe almacenarse en una <strong>clave independiente</strong>.
+            </p>
+
+            <h4>Estructura de claves esperada</h4>
+            <code class="code-line">item-cache-1
+item-cache-2
+item-cache-3</code>
+            <p class="small muted">Cada clave contiene la información del registro en formato JSON.</p>
+
+            <h4>Servicio de caché requerido</h4>
+            <code class="code-line">ItemCacheService</code>
+
+            <div class="card req">
+                <h4>Métodos mínimos del servicio</h4>
+                <ul>
+                    <li>Método para <strong>guardar</strong> un registro.</li>
+                    <li>Método <code>getById</code> para recuperarlo.</li>
+                </ul>
+            </div>
+
+            <div class="card warn">
+                <h4>Restricciones de almacenamiento</h4>
+                <ul>
+                    <li>No se debe guardar todo el mapa de registros en una sola clave.</li>
+                    <li>Cada registro consultado debe tener su propia clave.</li>
+                    <li>El servicio debe manejar errores básicos de lectura o conversión JSON.</li>
+                    <li>El almacenamiento debe ejecutarse desde el servicio asociado,
+                        <strong>no</strong> desde el componente card ni page.
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- 15. LOADING -->
+        <div class="section">
+            <h2>15. Loading y Retardo Simulado</h2>
+            <p>La página principal deberá mostrar un indicador de carga antes de presentar los registros.</p>
+            <div class="card req">
+                <h4>Requerimientos</h4>
+                <ul>
+                    <li>El loading debe mostrarse al iniciar la consulta.</li>
+                    <li>Retardo simulado mínimo de <strong>2 segundos</strong>.</li>
+                    <li>Mientras se carga, no deben mostrarse tarjetas incompletas.</li>
+                    <li>Puede usarse un spinner de DaisyUI o implementación propia con TailwindCSS.</li>
+                    <li>Al finalizar la carga, deben mostrarse las tarjetas.</li>
+                    <li>El total de elementos debe actualizarse cuando los datos ya estén disponibles.</li>
+                </ul>
+            </div>
+            <div class="card info">
+                También se requiere aplicar <strong>loading en la página de detalle</strong>.
+            </div>
+        </div>
+
+        <!-- 16. ESTILOS -->
+        <div class="section">
+            <h2>16. Estilos y Responsividad</h2>
+            <p>La aplicación debe usar TailwindCSS y DaisyUI para mejorar la presentación visual.</p>
+            <div class="card-grid">
+                <div class="card info">Header con diseño diferenciado.</div>
+                <div class="card info">Hero visualmente destacado.</div>
+                <div class="card info">Cards con fondo, sombra o borde.</div>
+                <div class="card info">Efectos hover en elementos interactivos.</div>
+                <div class="card info">Botones o enlaces con estilos claros.</div>
+                <div class="card info">Espaciado coherente entre secciones.</div>
+                <div class="card info">Tipografía legible y contraste adecuado.</div>
+                <div class="card info">Diseño responsivo.</div>
+                <div class="card info">Grilla adaptable para el listado de cards.</div>
+                <div class="card info">Imágenes correctamente ajustadas sin deformarse.</div>
+            </div>
+            <div
+                class="card warn"
+                style="margin-top:10px;"
+            >
+                No se evaluará únicamente que el proyecto funcione. También se evaluará la
+                <strong>calidad visual</strong>, la claridad de la interfaz y el uso correcto de
+                componentes reutilizables.
+            </div>
+        </div>
+
+        <!-- 17. BUENAS PRÁCTICAS -->
+        <div class="section">
+            <h2>17. Consideraciones de Rendimiento y Buenas Prácticas</h2>
+            <div class="card-grid">
+                <div class="card neutral">Separar páginas, servicios, interfaces y componentes.</div>
+                <div class="card neutral">Evitar duplicación de código.</div>
+                <div class="card neutral">Reutilizar componentes correctamente.</div>
+                <div class="card neutral">Evitar consumo HTTP dentro de componentes puramente visuales.</div>
+                <div class="card neutral">Usar señales para estados simples de interfaz.</div>
+                <div class="card neutral">Evitar redibujar componentes comunes de forma innecesaria.</div>
+                <div class="card neutral">Mantener rutas limpias.</div>
+                <div class="card neutral">Usar nombres claros para archivos, clases, métodos e interfaces.</div>
+                <div class="card neutral">Evitar lógica compleja dentro del HTML.</div>
+                <div class="card neutral">Controlar estados de carga, error y datos vacíos.</div>
+            </div>
+        </div>
+
+        <!-- 18. ENTREGABLES -->
+        <div class="section">
+            <h2>18. Entregables</h2>
+            <p>Deberá entregar en <strong>AVAC</strong>:</p>
+            <div class="card req">
+                <ul>
+                    <li>Enlace al repositorio de GitHub.</li>
+                    <li>Commit final realizado dentro del tiempo establecido para la evaluación con capturas en README.
+                    </li>
+                </ul>
+            </div>
+            <h4>El README debe incluir:</h4>
+            <div class="card-grid">
+                <div class="card info">Captura de la página con listado de componentes.</div>
+                <div class="card info">Captura de la página de detalle.</div>
+                <div class="card info">Captura del localStorage del navegador.</div>
+            </div>
+        </div>
+
+        <!-- 19. REVISIÓN -->
+        <div class="section">
+            <h2>19. Revisión del Proyecto</h2>
+            <div class="card warn">
+                <h4>⚠ Importante</h4>
+                La evaluación se revisará <strong>únicamente desde el repositorio entregado en AVAC</strong>.
+                <br><br>
+                El proyecto no debe presentar errores de instalación, compilación o ejecución.
+                <br><br>
+                Si el proyecto no puede clonarse, instalarse o ejecutarse, la calificación se verá
+                <strong>afectada directamente</strong>.
+            </div>
+        </div>
+
+        <!-- 20. CRITERIOS DE EVALUACIÓN -->
+        <div class="section">
+            <h2>20. Criterios de Evaluación</h2>
+            <table class="rubric">
+                <thead>
+                    <tr>
+                        <th style="width:22%;">Criterio</th>
+                        <th style="width:5%;">Pts</th>
+                        <th>0% – No logrado</th>
+                        <th>50% – Parcialmente logrado</th>
+                        <th>100% – Logrado completamente</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1. Estructura del proyecto, rutas y organización</td>
+                        <td>1</td>
+                        <td>Proyecto desordenado, sin rutas funcionales o con errores graves de estructura.</td>
+                        <td>Estructura parcialmente organizada; rutas básicas funcionan, pero existen problemas de
+                            separación, nombres poco claros o carpetas mal distribuidas.</td>
+                        <td>Proyecto organizado por páginas, servicios, interfaces y componentes; rutas limpias,
+                            funcionales y correctamente declaradas en <code>app.routes.ts</code>.</td>
+                    </tr>
+                    <tr>
+                        <td>2. Servicio de consumo de API e interfaces</td>
+                        <td>1</td>
+                        <td>No consume API o usa datos quemados; no existen interfaces; uso excesivo de
+                            <code>any</code>.
+                        </td>
+                        <td>Consume parcialmente; interfaces incompletas; el servicio implementa solo parte de la lógica
+                            requerida o mezcla responsabilidades.</td>
+                        <td>Servicio completo con método de listado y método de detalle; respuestas tipadas
+                            correctamente con interfaces claras y sin uso innecesario de <code>any</code>.</td>
+                    </tr>
+                    <tr>
+                        <td>3. Página principal con listado, loading y señales</td>
+                        <td>1.5</td>
+                        <td>No muestra listado funcional; no hay loading ni señales.</td>
+                        <td>Muestra datos parcialmente; loading incompleto; señal implementada de forma limitada o el
+                            total no corresponde al listado real.</td>
+                        <td>Página principal funcional; loading con retardo mínimo de 2 segundos; señal actualiza el
+                            total usando <code>length</code> del listado cargado; uso correcto de <code>@if</code> y
+                            <code>@for</code>.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>4. HeroComponent en página principal y detalle</td>
+                        <td>1.5</td>
+                        <td>No existe hero o solo aparece en una página sin lógica funcional.</td>
+                        <td>El hero aparece en ambas páginas, pero muestra información incompleta o no valida
+                            correctamente el parámetro <code>total</code>.</td>
+                        <td>Hero correcto en home y detalle; en home presenta el total del listado cargado; en detalle
+                            muestra el query param <code>total</code>; si no existe, muestra
+                            <code>ERROR EN TOTAL</code>.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>5. Componente card reutilizable</td>
+                        <td>1.5</td>
+                        <td>No existe componente card o está mezclado directamente en la página.</td>
+                        <td>Card parcialmente reutilizable; muestra datos mínimos; navegación incorrecta o dependiente
+                            de toda la tarjeta.</td>
+                        <td>Card reutilizable, recibe datos por <code>input</code>, muestra imagen y datos relevantes;
+                            la navegación ocurre solo desde la imagen y el atributo principal.</td>
+                    </tr>
+                    <tr>
+                        <td>6. Navegación hacia detalle con ruta dinámica y query param</td>
+                        <td>1.5</td>
+                        <td>No existe navegación funcional hacia detalle o la ruta está mal definida.</td>
+                        <td>Navega parcialmente, pero no envía correctamente el <code>id</code> o no envía el parámetro
+                            <code>total</code>.
+                        </td>
+                        <td>Navegación correcta con formato <code>/details/:id?total=valor</code>; obtiene el
+                            <code>id</code> desde la ruta y el <code>total</code> desde query params.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>7. Página de detalle y consumo por ID</td>
+                        <td>2</td>
+                        <td>No existe detalle funcional o no consume el registro individual desde el servicio.</td>
+                        <td>Detalle parcial; muestra pocos datos, no maneja correctamente loading/error o falla al
+                            recargar la ruta.</td>
+                        <td>Detalle completo; consume por ID desde el servicio; muestra imagen, nombre o atributo
+                            principal, identificador y al menos cuatro atributos adicionales.</td>
+                    </tr>
+                    <tr>
+                        <td>8. Caché local con localStorage</td>
+                        <td>2</td>
+                        <td>No guarda información en <code>localStorage</code>.</td>
+                        <td>Guarda información, pero en una sola clave global o con estructura incorrecta.</td>
+                        <td>Guarda cada registro consultado en una clave independiente; usa un servicio de caché local y
+                            maneja lectura/escritura de forma adecuada.</td>
+                    </tr>
+                    <tr>
+                        <td>9. Estilos, responsividad y UI</td>
+                        <td>2</td>
+                        <td>Interfaz sin estilos claros; no usa TailwindCSS/DaisyUI; no es responsiva.</td>
+                        <td>Estilos básicos; responsividad incompleta; componentes visualmente poco consistentes.</td>
+                        <td>Interfaz clara, responsiva, con header, hero, cards estilizadas, hover, espaciado, contraste
+                            y uso adecuado de TailwindCSS/DaisyUI.</td>
+                    </tr>
+                    <tr>
+                        <td>10. Ejecución, repositorio y entrega</td>
+                        <td>1</td>
+                        <td>El proyecto no se puede clonar, instalar o ejecutar.</td>
+                        <td>El proyecto ejecuta con ajustes manuales o presenta advertencias/errores menores.</td>
+                        <td>El proyecto se clona, instala y ejecuta sin errores; README incluye instrucciones básicas de
+                            ejecución.</td>
+                    </tr>
+                    <tr class="total-row">
+                        <td><strong>Total</strong></td>
+                        <td><strong>15</strong></td>
+                        <td colspan="3">
+                            <strong>Conversión a nota sobre 10:</strong>
+                            &nbsp; Nota = (Puntaje obtenido / 15) × 10
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- FIRMA -->
+        <div style="text-align: center; margin: 16px auto 0;">
+            <p class="signature">Docente / Técnico Docente: Ing. Pablo Torres</p>
+            <p>Firma: _______________________________</p>
+        </div>
+
+
+
+    </main>
+    <div
+        id="securityOverlay"
+        class="security-overlay"
+    >
+        <div class="security-box">
+            <h2>Contenido protegido</h2>
+            <p>La evaluación se ocultó porque la ventana perdió el foco.</p>
+            <small>Regrese a la página para continuar.</small>
+        </div>
+    </div>
+    <script src="../js/protection.js"></script>
+</body>
+
+</html>
