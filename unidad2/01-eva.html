@@ -246,23 +246,13 @@
             <div class="card req">
                 <h4>La aplicación debe contener como mínimo:</h4>
                 <ul>
-                    <li>Un servicio Angular para consumir la API.</li>
-                    <li>Dos métodos principales en el servicio:
-                        <ul>
-                            <li>Un método para obtener el listado de registros.</li>
-                            <li>Un método para obtener el detalle de un registro por identificador.</li>
-                        </ul>
-                    </li>
-                    <li>Interfaces TypeScript para representar la respuesta del listado y el detalle.</li>
-                    <li>Una página principal para mostrar los registros.</li>
-                    <li>Una página de detalle para mostrar información ampliada.</li>
-                    <li>Un componente reutilizable tipo card.</li>
-                    <li>Un componente header.</li>
-                    <li>Un componente footer.</li>
-                    <li>Layout de la página <strong>no debe redibujar</strong> header ni footer.</li>
-                    <li>Manejo de loading antes de mostrar la información.</li>
-                    <li>Almacenamiento en <code>localStorage</code> de cada registro consultado en la página de detalle.
-                    </li>
+                    <li>Servicio Angular con métodos de listado y de detalle por identificador.</li>
+                    <li>Interfaces TypeScript para los datos del API.</li>
+                    <li>Página principal y página de detalle.</li>
+                    <li>Componentes: <code>HeaderComponent</code>, <code>FooterComponent</code>, <code>HeroComponent</code> y componente card reutilizable.</li>
+                    <li>Layout compartido; header y footer <strong>no se redibujan</strong> al navegar.</li>
+                    <li>Indicador de carga antes de mostrar los registros.</li>
+                    <li>Caché en <code>localStorage</code> por registro individual consultado.</li>
                 </ul>
             </div>
         </div>
@@ -464,9 +454,7 @@
                     <h4>Funcionalidades requeridas</h4>
                     <ul>
                         <li>Obtener los registros desde la API.</li>
-                        <li>Mostrar componente Hero.</li>
                         <li>Mostrar estado de carga antes de renderizar las tarjetas.</li>
-                        <li>Simular un retardo mínimo de <strong>2 segundos</strong>.</li>
                         <li>Actualizar mediante señal el total de elementos mostrados.</li>
                         <li>Mostrar los registros en una grilla responsiva.</li>
                         <li>Usar el componente card para cada registro.</li>
@@ -540,10 +528,6 @@ total = input.required&lt;number&gt;();</code>
         <!-- 12. NAVEGACIÓN -->
         <div class="section">
             <h2>12. Navegación hacia Detalle</h2>
-            <p>
-                Al hacer clic sobre la imagen o el atributo principal del componente card, la aplicación deberá
-                navegar hacia la página de detalle del registro seleccionado.
-            </p>
             <div class="card req">
                 <h4>La navegación deberá enviar</h4>
                 <ul>
@@ -591,32 +575,7 @@ total = input.required&lt;number&gt;();</code>
 
             <h4>Formato de ruta</h4>
             <code class="code-line">/details/:id?total=valor</code>
-
-            <div
-                class="two-col"
-                style="margin-top:8px;"
-            >
-                <div>
-                    <p class="bold small">URL válida</p>
-                    <code class="code-line">/details/6?total=10</code>
-                    <div
-                        class="card req"
-                        style="margin-top:6px;"
-                    >
-                        Hero muestra: <code>Total de registros: 10</code>
-                    </div>
-                </div>
-                <div>
-                    <p class="bold small">Sin parámetro total</p>
-                    <code class="code-line">/details/6</code>
-                    <div
-                        class="card warn"
-                        style="margin-top:6px;"
-                    >
-                        Hero muestra: <code>ERROR EN TOTAL</code>
-                    </div>
-                </div>
-            </div>
+            <p class="small muted">Ver comportamiento del Hero según el parámetro <code>total</code> en la Sección 7.</p>
 
             <div
                 class="card req"
@@ -630,11 +589,6 @@ total = input.required&lt;number&gt;();</code>
                 </ul>
             </div>
 
-            <div class="card warn">
-                La página de detalle debe consumir <strong>solo el servicio <code>ItemService</code></strong>,
-                no directamente <code>localStorage</code>. Es el servicio quien verifica si existe en caché local;
-                si no existe, consume del API y luego guarda.
-            </div>
         </div>
 
         <!-- 14. LOCALSTORAGE -->
@@ -688,7 +642,6 @@ item-cache-3</code>
                     <li>Mientras se carga, no deben mostrarse tarjetas incompletas.</li>
                     <li>Puede usarse un spinner de DaisyUI o implementación propia con TailwindCSS.</li>
                     <li>Al finalizar la carga, deben mostrarse las tarjetas.</li>
-                    <li>El total de elementos debe actualizarse cuando los datos ya estén disponibles.</li>
                 </ul>
             </div>
             <div class="card info">
