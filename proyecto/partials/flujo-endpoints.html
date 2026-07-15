@@ -1,0 +1,673 @@
+<h4>4. Flujo funcional y endpoints mínimos</h4>
+
+<p>
+    La API deberá implementar el flujo completo de creación, publicación, inscripción y gestión de
+    eventos académicos.
+    Todos los endpoints indicados son obligatorios y utilizarán como ruta base <code>/api</code>.
+    Los estudiantes podrán agregar otros endpoints cuando sean necesarios para completar su solución.
+</p>
+
+<h4>4.1. Flujo principal del sistema</h4>
+
+<ol>
+    <li>
+        Un participante se registra mediante correo y contraseña. La cuenta se crea con el rol
+        <code>PARTICIPANT</code> y estado <code>ACTIVE</code>.
+    </li>
+    <li>
+        El administrador consulta los usuarios registrados y puede asignar el rol
+        <code>ORGANIZER</code>, bloquear o reactivar una cuenta.
+    </li>
+    <li>
+        Un organizador crea un evento en estado <code>DRAFT</code>, registra sus sesiones y
+        posteriormente lo publica.
+    </li>
+    <li>
+        Los usuarios pueden consultar los eventos publicados sin autenticarse, aplicando búsqueda,
+        filtros, paginación y ordenamiento.
+    </li>
+    <li>
+        Un participante autenticado solicita su inscripción en un evento. La inscripción se registra
+        inicialmente con estado <code>PENDING</code>.
+    </li>
+    <li>
+        El organizador propietario del evento revisa la solicitud y puede confirmarla o rechazarla.
+    </li>
+    <li>
+        Cuando una inscripción es confirmada, el sistema deberá reducir los cupos disponibles dentro
+        de una transacción.
+    </li>
+    <li>
+        Si una inscripción confirmada es cancelada, el sistema deberá liberar nuevamente el cupo.
+    </li>
+    <li>
+        El participante podrá consultar sus inscripciones y descargar su comprobante cuando la
+        inscripción se encuentre confirmada.
+    </li>
+    <li>
+        El organizador y el administrador podrán consultar estadísticas y descargar reportes de los
+        eventos.
+    </li>
+</ol>
+
+<h4>4.2. Estados permitidos</h4>
+
+<table class="rubric">
+    <thead>
+        <tr>
+            <th>Recurso</th>
+            <th>Estados</th>
+            <th>Transiciones permitidas</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Usuario</td>
+            <td>
+                <code>ACTIVE</code>,
+                <code>BLOCKED</code>
+            </td>
+            <td>
+                <code>ACTIVE → BLOCKED</code><br>
+                <code>BLOCKED → ACTIVE</code>
+            </td>
+        </tr>
+        <tr>
+            <td>Evento</td>
+            <td>
+                <code>DRAFT</code>,
+                <code>PUBLISHED</code>,
+                <code>FINISHED</code>,
+                <code>CANCELLED</code>
+            </td>
+            <td>
+                <code>DRAFT → PUBLISHED</code><br>
+                <code>PUBLISHED → FINISHED</code><br>
+                <code>DRAFT → CANCELLED</code><br>
+                <code>PUBLISHED → CANCELLED</code>
+            </td>
+        </tr>
+        <tr>
+            <td>Inscripción</td>
+            <td>
+                <code>PENDING</code>,
+                <code>CONFIRMED</code>,
+                <code>REJECTED</code>,
+                <code>CANCELLED</code>
+            </td>
+            <td>
+                <code>PENDING → CONFIRMED</code><br>
+                <code>PENDING → REJECTED</code><br>
+                <code>PENDING → CANCELLED</code><br>
+                <code>CONFIRMED → CANCELLED</code>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+<h4>4.3. Módulo de autenticación</h4>
+
+<p>
+    Permitirá registrar participantes, iniciar y cerrar sesión, renovar el access token y consultar
+    la información del usuario autenticado.
+</p>
+
+<table class="rubric">
+    <thead>
+        <tr>
+            <th>Método</th>
+            <th>Endpoint</th>
+            <th>Acceso</th>
+            <th>Función</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><code>POST</code></td>
+            <td><code>/api/auth/register</code></td>
+            <td>Público</td>
+            <td>Registrar un participante.</td>
+        </tr>
+        <tr>
+            <td><code>POST</code></td>
+            <td><code>/api/auth/login</code></td>
+            <td>Público</td>
+            <td>Autenticar y devolver access token y refresh token.</td>
+        </tr>
+        <tr>
+            <td><code>POST</code></td>
+            <td><code>/api/auth/refresh</code></td>
+            <td>Refresh token</td>
+            <td>Generar un nuevo access token.</td>
+        </tr>
+        <tr>
+            <td><code>POST</code></td>
+            <td><code>/api/auth/logout</code></td>
+            <td>Autenticado</td>
+        </tr>
+        <tr>
+            <td><code>GET</code></td>
+            <td><code>/api/auth/me</code></td>
+            <td>Autenticado</td>
+            <td>Consultar el perfil autenticado.</td>
+        </tr>
+    </tbody>
+</table>
+
+<h4>4.4. Módulo de usuarios</h4>
+
+<p>
+    Permitirá al administrador consultar usuarios, asignar roles y cambiar el estado de las cuentas.
+    Un participante no podrá asignarse roles ni modificar el estado de otros usuarios.
+</p>
+
+<table class="rubric">
+    <thead>
+        <tr>
+            <th>Método</th>
+            <th>Endpoint</th>
+            <th>Acceso</th>
+            <th>Función</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><code>GET</code></td>
+            <td><code>/api/users</code></td>
+            <td>ADMIN</td>
+            <td>Listar usuarios con paginación y filtros.</td>
+        </tr>
+        <tr>
+            <td><code>GET</code></td>
+            <td><code>/api/users/{id}</code></td>
+            <td>ADMIN</td>
+            <td>Consultar un usuario.</td>
+        </tr>
+        <tr>
+            <td><code>PUT</code></td>
+            <td><code>/api/users/{id}/roles</code></td>
+            <td>ADMIN</td>
+            <td>Asignar o retirar roles.</td>
+        </tr>
+        <tr>
+            <td><code>PATCH</code></td>
+            <td><code>/api/users/{id}/status</code></td>
+            <td>ADMIN</td>
+            <td>Bloquear o reactivar una cuenta.</td>
+        </tr>
+    </tbody>
+</table>
+
+<h4>4.5. Módulo de categorías</h4>
+
+<p>
+    Permitirá administrar las categorías utilizadas para clasificar los eventos. No se permitirán
+    nombres duplicados.
+</p>
+
+<table class="rubric">
+    <thead>
+        <tr>
+            <th>Método</th>
+            <th>Endpoint</th>
+            <th>Acceso</th>
+            <th>Función</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><code>POST</code></td>
+            <td><code>/api/categories</code></td>
+            <td>ADMIN</td>
+            <td>Crear una categoría.</td>
+        </tr>
+        <tr>
+            <td><code>GET</code></td>
+            <td><code>/api/categories</code></td>
+            <td>Público</td>
+            <td>Listar categorías activas.</td>
+        </tr>
+        <tr>
+            <td><code>GET</code></td>
+            <td><code>/api/categories/{id}</code></td>
+            <td>Público</td>
+            <td>Consultar una categoría.</td>
+        </tr>
+        <tr>
+            <td><code>PUT</code></td>
+            <td><code>/api/categories/{id}</code></td>
+            <td>ADMIN</td>
+            <td>Actualizar una categoría.</td>
+        </tr>
+        <tr>
+            <td><code>DELETE</code></td>
+            <td><code>/api/categories/{id}</code></td>
+            <td>ADMIN</td>
+            <td>Realizar eliminación lógica.</td>
+        </tr>
+    </tbody>
+</table>
+
+<h4>4.6. Módulo de eventos</h4>
+
+<p>
+    Permitirá a los organizadores gestionar sus propios eventos. Los usuarios públicos únicamente
+    podrán consultar eventos con estado <code>PUBLISHED</code>.
+</p>
+
+<table class="rubric">
+    <thead>
+        <tr>
+            <th>Método</th>
+            <th>Endpoint</th>
+            <th>Acceso</th>
+            <th>Función</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><code>POST</code></td>
+            <td><code>/api/events</code></td>
+            <td>ORGANIZER</td>
+            <td>Crear un evento en estado DRAFT.</td>
+        </tr>
+        <tr>
+            <td><code>GET</code></td>
+            <td><code>/api/events</code></td>
+            <td>Público</td>
+            <td>Listar eventos publicados con filtros y paginación.</td>
+        </tr>
+        <tr>
+            <td><code>GET</code></td>
+            <td><code>/api/events/{id}</code></td>
+            <td>Público</td>
+            <td>Consultar el detalle de un evento publicado.</td>
+        </tr>
+        <tr>
+            <td><code>GET</code></td>
+            <td><code>/api/events/mine</code></td>
+            <td>ORGANIZER</td>
+            <td>Consultar los eventos del organizador autenticado.</td>
+        </tr>
+        <tr>
+            <td><code>PUT</code></td>
+            <td><code>/api/events/{id}</code></td>
+            <td>Propietario o ADMIN</td>
+            <td>Actualizar un evento.</td>
+        </tr>
+        <tr>
+            <td><code>PATCH</code></td>
+            <td><code>/api/events/{id}/status</code></td>
+            <td>Propietario o ADMIN</td>
+            <td>Cambiar el estado del evento.</td>
+        </tr>
+        <tr>
+            <td><code>DELETE</code></td>
+            <td><code>/api/events/{id}</code></td>
+            <td>Propietario o ADMIN</td>
+            <td>Realizar eliminación lógica.</td>
+        </tr>
+    </tbody>
+</table>
+
+<p>El listado deberá aceptar como mínimo:</p>
+
+
+
+<pre class="code-line">GET /api/events?page=0&amp;size=10
+GET /api/events?search=java
+GET /api/events?categoryId=2
+GET /api/events?modality=VIRTUAL
+GET /api/events?startDate=2026-07-01&amp;endDate=2026-07-31
+GET /api/events?sort=startDate,asc</pre>
+<h4>4.7. Módulo de sesiones</h4>
+<p> Permitirá registrar las actividades u horarios pertenecientes a un evento. Solo el propietario del evento o un
+    administrador podrá modificarlas. </p>
+<table class="rubric">
+    <thead>
+        <tr>
+            <th>Método</th>
+            <th>Endpoint</th>
+            <th>Acceso</th>
+            <th>Función</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><code>POST</code></td>
+            <td><code>/api/events/{eventId}/sessions</code></td>
+            <td>Propietario o ADMIN</td>
+            <td>Crear una sesión.</td>
+        </tr>
+        <tr>
+            <td><code>GET</code></td>
+            <td><code>/api/events/{eventId}/sessions</code></td>
+            <td>Público</td>
+            <td>Listar las sesiones de un evento publicado.</td>
+        </tr>
+        <tr>
+            <td><code>PUT</code></td>
+            <td><code>/api/events/{eventId}/sessions/{sessionId}</code></td>
+            <td>Propietario o ADMIN</td>
+            <td>Actualizar una sesión.</td>
+        </tr>
+        <tr>
+            <td><code>DELETE</code></td>
+            <td><code>/api/events/{eventId}/sessions/{sessionId}</code></td>
+            <td>Propietario o ADMIN</td>
+            <td>Eliminar una sesión.</td>
+        </tr>
+    </tbody>
+</table>
+<h4>4.8. Módulo de inscripciones</h4>
+<p> Permitirá completar el flujo entre participantes y organizadores. Cada cambio de estado deberá registrarse en el
+    historial. </p>
+<table class="rubric">
+    <thead>
+        <tr>
+            <th>Método</th>
+            <th>Endpoint</th>
+            <th>Acceso</th>
+            <th>Función</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><code>POST</code></td>
+            <td><code>/api/events/{eventId}/registrations</code></td>
+            <td>PARTICIPANT</td>
+            <td>Solicitar una inscripción.</td>
+        </tr>
+        <tr>
+            <td><code>GET</code></td>
+            <td><code>/api/registrations/me</code></td>
+            <td>PARTICIPANT</td>
+            <td>Consultar las inscripciones propias.</td>
+        </tr>
+        <tr>
+            <td><code>GET</code></td>
+            <td><code>/api/events/{eventId}/registrations</code></td>
+            <td>Propietario o ADMIN</td>
+            <td>Listar inscritos con filtros y paginación.</td>
+        </tr>
+        <tr>
+            <td><code>GET</code></td>
+            <td><code>/api/registrations/{id}</code></td>
+            <td>Propietario, participante o ADMIN</td>
+            <td>Consultar una inscripción.</td>
+        </tr>
+        <tr>
+            <td><code>PATCH</code></td>
+            <td><code>/api/registrations/{id}/status</code></td>
+            <td>Propietario o ADMIN</td>
+            <td>Confirmar o rechazar una inscripción.</td>
+        </tr>
+        <tr>
+            <td><code>DELETE</code></td>
+            <td><code>/api/registrations/{id}</code></td>
+            <td>Participante propietario</td>
+            <td>Cancelar la inscripción propia.</td>
+        </tr>
+
+    </tbody>
+</table>
+
+
+<h4>4.9. Módulo de auditoría</h4>
+
+<p>
+    El sistema deberá registrar automáticamente las operaciones críticas realizadas por los usuarios, como inicios de
+    sesión, cambios de roles, cambios de estado, eliminaciones lógicas y cualquier otra operación que afecte la
+    integridad de los datos.
+</p>
+
+<p>
+    Los registros deberán generarse internamente desde la capa de servicio. No se deberán crear endpoints para insertar,
+    modificar o eliminar registros de auditoría.
+</p>
+
+<h4>4.9.1. Flujo resumido de auditoría</h4>
+
+<p>
+    Como ejemplo, el administrador con identificador <code>15</code> asigna el rol
+    <code>ORGANIZER</code> al usuario con identificador <code>28</code>.
+</p>
+
+<p><strong>Solicitud realizada:</strong></p>
+
+<pre class="console">PUT /api/users/28/roles
+Authorization: Bearer JWT
+Content-Type: application/json</pre>
+
+<p><strong>Contenido de la solicitud:</strong></p>
+
+<pre class="code-line">{
+  "roles": [
+    "PARTICIPANT",
+    "ORGANIZER"
+  ]
+}</pre>
+
+<p><strong>Flujo ejecutado por el sistema:</strong></p>
+
+<ol>
+    <li>Spring Security identifica al administrador autenticado.</li>
+    <li>El servicio consulta al usuario con identificador <code>28</code>.</li>
+    <li>Verifica que el usuario exista y que los roles sean válidos.</li>
+    <li>Obtiene los roles actuales del usuario.</li>
+    <li>Actualiza los roles dentro de una transacción.</li>
+    <li>Registra automáticamente la operación en la tabla <code>audit_logs</code>.</li>
+    <li>Devuelve la información actualizada del usuario.</li>
+</ol>
+
+<p><strong>Respuesta esperada:</strong></p>
+
+<pre class="console">HTTP/1.1 200 OK
+Content-Type: application/json</pre>
+
+<pre class="code-line">{
+  "id": 28,
+  "email": "participant@correo.com",
+  "status": "ACTIVE",
+  "roles": [
+    "PARTICIPANT",
+    "ORGANIZER"
+  ]
+}</pre>
+
+<p><strong>Registro de auditoría generado:</strong></p>
+
+<pre class="code-line">{
+  "actorId": 15,
+  "action": "USER_ROLES_UPDATED",
+  "resourceType": "USER",
+  "resourceId": 28,
+  "previousValue": {
+    "roles": [
+      "PARTICIPANT"
+    ]
+  },
+  "newValue": {
+    "roles": [
+      "PARTICIPANT",
+      "ORGANIZER"
+    ]
+  },
+  "result": "SUCCESS",
+  "ipAddress": "192.168.1.20",
+  "httpMethod": "PUT",
+  "endpoint": "/api/users/28/roles",
+  "createdAt": "2026-07-15T10:30:00-05:00"
+}</pre>
+
+<p>La información almacenada permitirá identificar que:</p>
+
+<pre class="console">El administrador 15 asignó el rol ORGANIZER al usuario 28.
+Fecha: 2026-07-15 10:30
+IP: 192.168.1.20
+Resultado: SUCCESS</pre>
+
+<h4>4.9.2. Estructura de la tabla audit_logs</h4>
+
+<table class="rubric">
+    <thead>
+        <tr>
+            <th>Columna</th>
+            <th>Tipo SQL</th>
+            <th>Restricción</th>
+            <th>Descripción</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><code>id</code></td>
+            <td><code>BIGSERIAL</code></td>
+            <td>PRIMARY KEY</td>
+            <td>Identificador del registro de auditoría.</td>
+        </tr>
+        <tr>
+            <td><code>actor_id</code></td>
+            <td><code>BIGINT</code></td>
+            <td>FOREIGN KEY, NULL</td>
+            <td>Usuario que ejecutó la operación. Puede ser nulo en acciones no autenticadas.</td>
+        </tr>
+        <tr>
+            <td><code>action</code></td>
+            <td><code>VARCHAR(60)</code></td>
+            <td>NOT NULL</td>
+            <td>Acción realizada, por ejemplo <code>USER_ROLES_UPDATED</code>.</td>
+        </tr>
+        <tr>
+            <td><code>resource_type</code></td>
+            <td><code>VARCHAR(50)</code></td>
+            <td>NOT NULL</td>
+            <td>Tipo de recurso afectado, como <code>USER</code> o <code>EVENT</code>.</td>
+        </tr>
+        <tr>
+            <td><code>resource_id</code></td>
+            <td><code>BIGINT</code></td>
+            <td>NULL</td>
+            <td>Identificador del recurso afectado.</td>
+        </tr>
+        <tr>
+            <td><code>previous_value</code></td>
+            <td><code>JSONB</code></td>
+            <td>NULL</td>
+            <td>Valores existentes antes de la operación.</td>
+        </tr>
+        <tr>
+            <td><code>new_value</code></td>
+            <td><code>JSONB</code></td>
+            <td>NULL</td>
+            <td>Valores almacenados después de la operación.</td>
+        </tr>
+        <tr>
+            <td><code>result</code></td>
+            <td><code>VARCHAR(20)</code></td>
+            <td>NOT NULL</td>
+            <td>Resultado de la operación: <code>SUCCESS</code> o <code>FAILED</code>.</td>
+        </tr>
+        <tr>
+            <td><code>ip_address</code></td>
+            <td><code>VARCHAR(45)</code></td>
+            <td>NULL</td>
+            <td>Dirección IPv4 o IPv6 desde la que se realizó la solicitud.</td>
+        </tr>
+        <tr>
+            <td><code>http_method</code></td>
+            <td><code>VARCHAR(10)</code></td>
+            <td>NULL</td>
+            <td>Método HTTP utilizado.</td>
+        </tr>
+        <tr>
+            <td><code>endpoint</code></td>
+            <td><code>VARCHAR(255)</code></td>
+            <td>NULL</td>
+            <td>Endpoint sobre el que se realizó la operación.</td>
+        </tr>
+        <tr>
+            <td><code>correlation_id</code></td>
+            <td><code>VARCHAR(36)</code></td>
+            <td>NULL</td>
+            <td>Identificador utilizado para relacionar la operación con los logs técnicos.</td>
+        </tr>
+        <tr>
+            <td><code>created_at</code></td>
+            <td><code>TIMESTAMP WITH TIME ZONE</code></td>
+            <td>NOT NULL</td>
+            <td>Fecha y hora en que ocurrió la operación.</td>
+        </tr>
+    </tbody>
+</table>
+
+<p>
+    La auditoría no deberá almacenar contraseñas, access tokens, refresh tokens ni otra información sensible.
+</p>
+
+<h4>4.9.3. Endpoints sobre los que se aplicará la auditoría</h4>
+
+<p>
+    La auditoría deberá aplicarse obligatoriamente sobre los siguientes tres endpoints del sistema. Cada vez que uno de
+    ellos sea ejecutado, se deberá generar automáticamente un registro en la tabla <code>audit_logs</code>.
+</p>
+
+<table class="rubric">
+    <thead>
+        <tr>
+            <th>Módulo</th>
+            <th>Método</th>
+            <th>Endpoint</th>
+            <th>Acciones de auditoría</th>
+            <th>Información que se deberá registrar</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Autenticación</td>
+            <td><code>POST</code></td>
+            <td><code>/api/auth/login</code></td>
+            <td>
+                <code>LOGIN_SUCCESS</code><br>
+                <code>LOGIN_FAILED</code>
+            </td>
+            <td>
+                Usuario o correo utilizado, resultado, dirección IP, fecha, método HTTP y endpoint.
+            </td>
+        </tr>
+        <tr>
+            <td>Usuarios</td>
+            <td><code>PUT</code></td>
+            <td><code>/api/users/{id}/roles</code></td>
+            <td>
+                <code>USER_ROLES_UPDATED</code>
+            </td>
+            <td>
+                Administrador que ejecutó la operación, usuario afectado, roles anteriores, roles nuevos, resultado,
+                dirección IP y fecha.
+            </td>
+        </tr>
+        <tr>
+            <td>Inscripciones</td>
+            <td><code>PATCH</code></td>
+            <td><code>/api/registrations/{id}/status</code></td>
+            <td>
+                <code>REGISTRATION_STATUS_CHANGED</code>
+            </td>
+            <td>
+                Usuario que ejecutó la operación, inscripción afectada, estado anterior, estado nuevo, resultado,
+                dirección IP y fecha.
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+<p>
+    Los registros deberán generarse desde la capa de servicio después de ejecutar la operación. En los intentos fallidos
+    de inicio de sesión, la auditoría deberá registrarse aunque el usuario no se encuentre autenticado.
+</p>
+
+<p>
+    No se requiere desarrollar un controlador ni endpoints propios para crear, modificar o eliminar registros de
+    auditoría. La información será generada internamente y podrá verificarse directamente en la tabla
+    <code>audit_logs</code>.
+</p>
