@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
+  <meta
+    name="robots"
+    content="noindex, nofollow, noarchive"
+  />
+  <title>Evaluación práctica Spring Boot - Gestión de laboratorios e insumos</title>
+  <link
+    rel="stylesheet"
+    href="css/styles-eva.css"
+  />
+</head>
+
+<body>
+  <div
+    id="securityOverlay"
+    class="security-overlay"
+    aria-hidden="true"
+  >
+    <div class="security-overlay-content"><strong>Contenido temporalmente oculto</strong>
+      <p>Regrese a esta ventana para continuar.</p>
+    </div>
+  </div>
+  <main
+    class="page"
+    id="practice-content"
+  >
+    <table class="guide-table">
+      <tr>
+        <td class="logo-cell"><img
+            src="assets/ups-svg-plain.svg"
+            alt="Logo UPS"
+            class="logo-img"
+          ></td>
+        <td
+          colspan="4"
+          class="title-cell"
+        >FORMATO DE GUÍA DE EVALUACIÓN PRÁCTICA</td>
+      </tr>
+      <tr>
+        <td colspan="5">&nbsp;</td>
+      </tr>
+      <tr>
+        <td colspan="2"><strong>CARRERA:</strong> Computación</td>
+        <td colspan="3"><strong>ASIGNATURA:</strong> Programación y Plataformas Web</td>
+      </tr>
+      <tr>
+        <td><strong>TIPO:</strong></td>
+        <td>Evaluación práctica</td>
+        <td colspan="3"><strong>TÍTULO:</strong> Modificación y ampliación de una API REST segura para gestión de
+          laboratorios e insumos</td>
+      </tr>
+      <tr>
+        <td colspan="5"><strong>OBJETIVO</strong>
+          <p>Evaluar la capacidad para identificar la capa correcta de una aplicación Spring Boot, modificar contratos
+            JSON, construir consultas JPA, aplicar seguridad por roles, manejar excepciones centralizadas y desarrollar
+            de extremo a extremo un módulo REST basado en una sola entidad.</p>
+        </td>
+      </tr>
+      <tr>
+        <td class="section-label">INSTRUCCIONES:</td>
+        <td
+          colspan="4"
+          class="section-content"
+        >
+          <ol>
+            <li>Clone únicamente la variante compatible con el JDK instalado: Java 17, Java 21 o Java 25.</li>
+            <li>Ejecute el proyecto antes de modificarlo y confirme que inicia correctamente.</li>
+            <li>No modifique <code>schema.sql</code> ni <code>data.sql</code>.</li>
+            <li>No cambie nombres de rutas, campos JSON, mensajes, códigos internos ni códigos HTTP definidos.</li>
+            <li>Toda regla de negocio debe permanecer en la capa de servicio.</li>
+            <li>No se permite retornar entidades JPA desde controladores.</li>
+            <li>La entrega será el enlace del repositorio remoto dentro del tiempo indicado.</li>
+          </ol>
+        </td>
+      </tr>
+      <tr>
+        <td colspan="5">
+          <h3>CONTEXTO DEL SISTEMA</h3>
+          <p>La universidad dispone de una API para administrar usuarios, campus, laboratorios, equipamiento e insumos.
+            El proyecto entregado ya contiene los módulos de seguridad, usuarios y laboratorios. La base H2 se crea y
+            carga automáticamente desde <code>src/main/resources/schema.sql</code> y <code>data.sql</code>.</p>
+          <p>La base contiene las tablas <code>users</code>, <code>roles</code>, <code>user_roles</code>,
+            <code>campuses</code>, <code>laboratories</code>, <code>equipment</code>, <code>laboratory_equipment</code>,
+            <code>supplies</code> y <code>refresh_tokens</code>.
+          </p>
+          <div class="warning"><strong>Alcance:</strong> se evaluarán modificaciones concretas sobre módulos existentes
+            y el desarrollo completo de un solo dominio nuevo: <code>supplies</code>. Este módulo utiliza exclusivamente
+            la tabla <code>supplies</code>.</div>
+          <h4>Credenciales iniciales</h4>
+          <table class="rubric">
+            <thead>
+              <tr>
+                <th>Rol</th>
+                <th>Correo</th>
+                <th>Contraseña</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>ADMIN</td>
+                <td><code>admin@ups.edu.ec</code></td>
+                <td><code>Admin123!</code></td>
+              </tr>
+              <tr>
+                <td>COORDINATOR</td>
+                <td><code>coord@ups.edu.ec</code></td>
+                <td><code>Coord123!</code></td>
+              </tr>
+              <tr>
+                <td>STUDENT</td>
+                <td><code>ana@est.ups.edu.ec</code></td>
+                <td><code>Student123!</code></td>
+              </tr>
+            </tbody>
+          </table>
+          <h4>Autenticación</h4>
+          <pre class="code-line">POST /api/auth/login
+{
+  "email": "admin@ups.edu.ec",
+  "password": "Admin123!"
+}</pre>
+        </td>
+      </tr>
+      <tr>
+        <td colspan="5">
+          <h3>ACTIVIDADES POR DESARROLLAR</h3>
+          <div class="requirement"><span class="badge">R1 · 0,50 puntos</span>
+            <h4>Configuración de ejecución y JWT</h4>
+            <p>Modificar el archivo necesario para que la API se ejecute en el puerto <code>8091</code>. Cambiar la
+              expiración del access token a <code>900000</code> milisegundos. Mantener el context path
+              <code>/api</code>.
+            </p>
+            <p><strong>Capa afectada:</strong> configuración.</p>
+          </div>
+          <div class="requirement"><span class="badge">R2 · 1,00 punto</span>
+            <h4>Usuarios elegibles y nuevo contrato de respuesta</h4>
+            <p>Modificar <code>GET /api/users/eligible</code> para retornar únicamente usuarios con
+              <code>age &gt;= 18</code>, <code>active = true</code> y <code>deleted = false</code>, ordenados por
+              <code>fullName</code> ascendente.
+            </p>
+            <p>El JSON debe contener exactamente: <code>id</code>, <code>fullName</code>, <code>email</code>,
+              <code>age</code>, <code>active</code> y <code>roles</code>. El campo <code>name</code> no debe existir.
+            </p>
+            <p><strong>Capas afectadas:</strong> DTO, mapper, repository y service.</p>
+          </div>
+          <div class="requirement"><span class="badge">R3 · 1,00 punto</span>
+            <h4>Consulta de laboratorios disponibles</h4>
+            <p>Corregir <code>GET /api/laboratories/available?campusId={id}&amp;minCapacity={value}</code>. Debe
+              retornar laboratorios con campus coincidente, capacidad mayor o igual al mínimo, laboratorio activo,
+              campus activo y ambos no eliminados. Ordenar por capacidad descendente.</p>
+            <p>El método del repository debe ser:</p>
+            <p>
+              <code>findByCampus_IdAndCapacityGreaterThanEqualAndActiveTrueAndDeletedFalseAndCampus_ActiveTrueAndCampus_DeletedFalseOrderByCapacityDesc</code>
+            </p>
+            <p>Retorna <code>List&lt;LaboratoryEntity&gt;</code> y recibe
+              <code>Long campusId, Integer minCapacity</code>.
+            </p>
+            <p><strong>Capas afectadas:</strong> repository y service.</p>
+          </div>
+          <div class="requirement"><span class="badge">R4 · 0,50 puntos</span>
+            <h4>Excepción existente</h4>
+            <p>Actualmente el servicio produce un error 500 si no encuentra el laboratorio. Corregir
+              <code>GET /api/laboratories/{id}</code>. Cuando no existe debe utilizar <code>NotFoundException</code>.
+            </p>
+            <pre class="code-line">HTTP 404
+{
+  "status": 404,
+  "error": "Not Found",
+  "code": "LAB_NOT_FOUND",
+  "message": "Laboratory not found",
+  "path": "/api/laboratories/1000",
+  "details": null
+}</pre>
+            <p><strong>Capa afectada:</strong> service.</p>
+          </div>
+          <div class="requirement"><span class="badge">R5 · 0,50 puntos</span>
+            <h4>Autorización</h4>
+            <p>Aplicar estas reglas después de implementar los endpoints:</p>
+            <ul>
+              <li><code>/users/eligible</code>: únicamente ADMIN.</li>
+              <li><code>/laboratories/available</code>: cualquier usuario autenticado.</li>
+              <li><code>GET /supplies/low-stock</code>: cualquier usuario autenticado.</li>
+              <li>Crear, actualizar cantidad y eliminar insumos: ADMIN o COORDINATOR.</li>
+            </ul>
+            <p><strong>Capa afectada:</strong> controllers.</p>
+          </div>
+
+          <div class="requirement"><span class="badge">R6 · 2,00 puntos</span>
+            <h4>Crear un insumo</h4>
+            <p>Desarrollar el módulo <code>supplies</code> completo: entity, DTO, mapper, repository, service,
+              implementación, controller y excepción. El módulo debe inyectar únicamente <code>SupplyRepository</code>.
+            </p>
+            <pre class="code-line">POST /api/supplies
+{
+  "name": "Adaptador USB-C",
+  "description": "Adaptador para proyectores",
+  "quantity": 7,
+  "minimumStock": 3,
+  "unitPrice": 12.50
+}</pre>
+            <p>Reglas:</p>
+            <p>Para que se pueda crear un registo, el nombre debe ser obligatorio y único entre registros no
+              eliminados (<code>existsByNameIgnoreCaseAndDeletedFalse</code>). Si el nombre ya existe, responder
+              <code>409 CONFLICT</code> con código interno <code>SUPPLY_CONFLICT</code>.
+            </p>
+
+            <p>La <code>SupplyConflictException</code> es el Requerimiento 10, sera una exception que extienda de
+              ApplicationException. En el
+              constructor super este: <code>super(HttpStatus.CONFLICT, "SUPPLY_CONFLICT", message);
+            </code> </p>
+
+            <p>
+              La cantidad y stock mínimo mayores o
+              iguales a cero; precio mayor que cero. Crear con <code>active = true</code> y responder
+              <code>201 CREATED</code>.
+            </p>
+
+            <p>El metodo del servicio sera <code>
+    SupplyResponseDto create(CreateSupplyDto dto);
+
+            </code></p>
+
+            <p>Respuesta exacta: <code>id</code>, <code>name</code>, <code>description</code>, <code>quantity</code>,
+              <code>minimumStock</code>, <code>unitPrice</code> y <code>active</code>.
+            </p>
+            <div class="starter-files">
+              <h5>Archivos iniciales proporcionados</h5>
+              <p class="starter-files-description">Cree cada archivo en la ruta indicada y copie el contenido mediante
+                el botón.</p>
+              <div class="starter-file-card">
+                <div class="starter-file-information">
+                  <strong>SupplyEntity.java</strong><code>src/main/java/ec/edu/ups/icc/labevaluation/supplies/entities/SupplyEntity.java</code>
+                </div><button
+                  type="button"
+                  class="copy-file-button"
+                  data-copy-source="supply-entity-source"
+                  onclick="copyStarterFile(this)"
+                ><svg
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                    class="copy-icon"
+                  >
+                    <path
+                      d="M8 8h11v11H8V8Zm-3 8H3V3h13v2H5v11Z"
+                      fill="currentColor"
+                    />
+                  </svg><span>Copiar contenido</span></button>
+              </div>
+              <div class="starter-file-card">
+                <div class="starter-file-information">
+                  <strong>CreateSupplyDto.java</strong><code>src/main/java/ec/edu/ups/icc/labevaluation/supplies/dtos/CreateSupplyDto.java</code>
+                </div><button
+                  type="button"
+                  class="copy-file-button"
+                  data-copy-source="create-supply-dto-source"
+                  onclick="copyStarterFile(this)"
+                ><svg
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                    class="copy-icon"
+                  >
+                    <path
+                      d="M8 8h11v11H8V8Zm-3 8H3V3h13v2H5v11Z"
+                      fill="currentColor"
+                    />
+                  </svg><span>Copiar contenido</span></button>
+              </div>
+              <div class="starter-file-card">
+                <div class="starter-file-information">
+                  <strong>UpdateSupplyQuantityDto.java</strong><code>src/main/java/ec/edu/ups/icc/labevaluation/supplies/dtos/UpdateSupplyQuantityDto.java</code>
+                </div><button
+                  type="button"
+                  class="copy-file-button"
+                  data-copy-source="update-supply-dto-source"
+                  onclick="copyStarterFile(this)"
+                ><svg
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                    class="copy-icon"
+                  >
+                    <path
+                      d="M8 8h11v11H8V8Zm-3 8H3V3h13v2H5v11Z"
+                      fill="currentColor"
+                    />
+                  </svg><span>Copiar contenido</span></button>
+              </div>
+              <div class="starter-file-card">
+                <div class="starter-file-information">
+                  <strong>SupplyResponseDto.java</strong><code>src/main/java/ec/edu/ups/icc/labevaluation/supplies/dtos/SupplyResponseDto.java</code>
+                </div><button
+                  type="button"
+                  class="copy-file-button"
+                  data-copy-source="supply-response-dto-source"
+                  onclick="copyStarterFile(this)"
+                ><svg
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                    class="copy-icon"
+                  >
+                    <path
+                      d="M8 8h11v11H8V8Zm-3 8H3V3h13v2H5v11Z"
+                      fill="currentColor"
+                    />
+                  </svg><span>Copiar contenido</span></button>
+              </div>
+            </div>
+            <template id="supply-entity-source">package ec.edu.ups.icc.labevaluation.supplies.entities;
+
+              import java.math.BigDecimal;
+
+              import ec.edu.ups.icc.labevaluation.core.entities.BaseEntity;
+              import jakarta.persistence.Column;
+              import jakarta.persistence.Entity;
+              import jakarta.persistence.Table;
+
+              @Entity
+              @Table(name = "supplies")
+              public class SupplyEntity extends BaseEntity {
+
+              @Column(nullable = false, unique = true, length = 120)
+              private String name;
+
+              @Column(length = 250)
+              private String description;
+
+              @Column(nullable = false)
+              private Integer quantity;
+
+              @Column(name = "minimum_stock", nullable = false)
+              private Integer minimumStock;
+
+              @Column(name = "unit_price", nullable = false, precision = 10, scale = 2)
+              private BigDecimal unitPrice;
+
+              @Column(nullable = false)
+              private boolean active = true;
+
+              public String getName() {
+              return name;
+              }
+
+              public void setName(String name) {
+              this.name = name;
+              }
+
+              public String getDescription() {
+              return description;
+              }
+
+              public void setDescription(String description) {
+              this.description = description;
+              }
+
+              public Integer getQuantity() {
+              return quantity;
+              }
+
+              public void setQuantity(Integer quantity) {
+              this.quantity = quantity;
+              }
+
+              public Integer getMinimumStock() {
+              return minimumStock;
+              }
+
+              public void setMinimumStock(Integer minimumStock) {
+              this.minimumStock = minimumStock;
+              }
+
+              public BigDecimal getUnitPrice() {
+              return unitPrice;
+              }
+
+              public void setUnitPrice(BigDecimal unitPrice) {
+              this.unitPrice = unitPrice;
+              }
+
+              public boolean isActive() {
+              return active;
+              }
+
+              public void setActive(boolean active) {
+              this.active = active;
+              }
+              }
+            </template>
+            <template id="create-supply-dto-source">package ec.edu.ups.icc.labevaluation.supplies.dtos;
+
+              import java.math.BigDecimal;
+
+              import jakarta.validation.constraints.DecimalMin;
+              import jakarta.validation.constraints.Min;
+              import jakarta.validation.constraints.NotBlank;
+              import jakarta.validation.constraints.NotNull;
+              import jakarta.validation.constraints.Size;
+
+              public record CreateSupplyDto(
+              @NotBlank @Size(max = 120) String name,
+              @Size(max = 250) String description,
+              @NotNull @Min(0) Integer quantity,
+              @NotNull @Min(0) Integer minimumStock,
+              @NotNull @DecimalMin(value = "0.01") BigDecimal unitPrice) {
+              }
+            </template>
+            <template id="update-supply-dto-source">package ec.edu.ups.icc.labevaluation.supplies.dtos;
+
+              import jakarta.validation.constraints.Min;
+              import jakarta.validation.constraints.NotNull;
+
+              public record UpdateSupplyQuantityDto(
+              @NotNull @Min(0) Integer quantity) {
+              }
+            </template>
+            <template id="supply-response-dto-source">package ec.edu.ups.icc.labevaluation.supplies.dtos;
+
+              import java.math.BigDecimal;
+
+              public record SupplyResponseDto(
+              Long id,
+              String name,
+              String description,
+              Integer quantity,
+              Integer minimumStock,
+              BigDecimal unitPrice,
+              Boolean active) {
+              }
+            </template>
+          </div>
+
+          <div class="requirement"><span class="badge">R7 · 1,00 punto</span>
+            <h4>Listar insumos con cantidad menor al límite</h4>
+            <p>Implementar <code>GET /api/supplies/low-stock?maxQuantity=10</code>. Retornar únicamente registros con
+              <code>active = true</code>, <code>deleted = false</code> y <code>quantity &lt; maxQuantity</code>. Ordenar
+              por <code>quantity</code> ascendente. Responder siempre <code>200 OK</code>, incluso con lista vacía.
+            </p>
+            <p>El repository debe utilizar un método derivado de Spring Data JPA y consultar únicamente
+              <code>SupplyEntity</code>.
+            </p>
+
+            <p>Para esta consulta usar el siguiente metodo:
+              <code>findByActiveTrueAndDeletedFalseAndQuantityLessThanOrderByQuantityAsc</code>
+            </p>
+          </div>
+
+          <div class="requirement"><span class="badge">R8 · 1,00 punto</span>
+            <h4>Actualizar la cantidad</h4>
+            <p>Implementar <code>PATCH /api/supplies/{id}/quantity</code>.</p>
+            <pre class="code-line">{
+  "quantity": 25
+}</pre>
+            <p>Actualizar exclusivamente <code>quantity</code>. El valor debe ser mayor o igual a cero. Si el registro
+              no existe o está eliminado, responder <code>404</code> con código <code>SUPPLY_NOT_FOUND</code>. Retornar
+              el DTO actualizado con <code>200 OK</code>.</p>
+          </div>
+
+          <div class="requirement"><span class="badge">R9 · 1,00 punto</span>
+            <h4>Eliminar lógicamente un insumo</h4>
+            <p>Implementar <code>DELETE /api/supplies/{id}</code>. La eliminación debe asignar
+              <code>deleted = true</code> y <code>active = false</code>. Solo se puede eliminar un insumo cuando su
+              cantidad sea <code>0</code>. Si se elimina correctamente, responder <code>204 NO CONTENT</code>.
+            </p>
+            <p>Si la cantidad no es cero lanzar una exception
+              <code>SupplyConflictException("Supply cannot be deleted while quantity is greater than zero");</code>
+            </p>
+          </div>
+
+          <div class="requirement"><span class="badge">R10 · 1,50 puntos</span>
+            <h4>Excepción específica del módulo</h4>
+            <p>Crear <code>SupplyConflictException</code> extendiendo <code>ApplicationException</code>. Debe responder
+              <code>409 CONFLICT</code> con código interno <code>SUPPLY_CONFLICT</code>.
+            </p>
+            <p>Utilizar esta excepción en dos casos:</p>
+            <ul>
+              <li>Intentar crear un nombre ya registrado entre insumos no eliminados.</li>
+              <li>Intentar eliminar un insumo cuya cantidad sea mayor que cero.</li>
+            </ul>
+            <pre class="code-line">HTTP 409
+{
+  "code": "SUPPLY_CONFLICT",
+  "message": "Supply name already registered"
+}</pre>
+          </div>
+        </td>
+      </tr>
+      <tr>
+        <td colspan="5">
+          <h3>ESTRUCTURA ESPERADA DEL MÓDULO NUEVO</h3>
+          <pre class="code-line">supplies/
+├── controllers
+├── dtos
+├── entities
+├── exceptions
+├── mappers
+├── repositories
+└── services</pre>
+        </td>
+      </tr>
+      <tr>
+        <td colspan="5">
+          <h3>CRITERIOS DE EVALUACIÓN</h3>
+          <table class="rubric">
+            <thead>
+              <tr>
+                <th>Requerimiento</th>
+                <th>Puntaje</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>R1 Configuración y expiración JWT</td>
+                <td class="center">0,50</td>
+              </tr>
+              <tr>
+                <td>R2 Usuarios elegibles y DTO</td>
+                <td class="center">1,00</td>
+              </tr>
+              <tr>
+                <td>R3 Consulta de laboratorios</td>
+                <td class="center">1,00</td>
+              </tr>
+              <tr>
+                <td>R4 NotFoundException</td>
+                <td class="center">0,50</td>
+              </tr>
+              <tr>
+                <td>R5 Seguridad por roles</td>
+                <td class="center">0,50</td>
+              </tr>
+              <tr>
+                <td>R6 Creación de insumo</td>
+                <td class="center">2,00</td>
+              </tr>
+              <tr>
+                <td>R7 Listado de insumos</td>
+                <td class="center">1,00</td>
+              </tr>
+              <tr>
+                <td>R8 Actualización de cantidad</td>
+                <td class="center">1,00</td>
+              </tr>
+              <tr>
+                <td>R9 Eliminación lógica</td>
+                <td class="center">1,00</td>
+              </tr>
+              <tr>
+                <td>R10 Excepción específica</td>
+                <td class="center">1,50</td>
+              </tr>
+              <tr>
+                <td><strong>TOTAL</strong></td>
+                <td class="center"><strong>10,00</strong></td>
+              </tr>
+            </tbody>
+          </table>
+        </td>
+      </tr>
+      <tr>
+        <td colspan="5">
+          <h3>ENTREGA</h3>
+          <ol>
+            <li>Crear un repositorio personal con el nombre indicado por el docente.</li>
+            <li>Realizar un commit inicial inmediatamente después de clonar.</li>
+            <li>Subir el enlace al AVAC dentro del tiempo asignado.</li>
+            <li>Solo se evaluarán commits realizados hasta la hora de finalización.</li>
+            <li>El repositorio debe ser accesible y contener el proyecto completo.</li>
+          </ol>
+        </td>
+      </tr>
+    </table>
+    <div style="text-align:center;margin:18px auto">
+      <p class="signature">Docente / Técnico Docente: Ing. Pablo Torres Mgtr.</p>
+      <p>Firma: _______________________________</p>
+    </div>
+    <div class="footer"><span>Formato aprobado con Res. C.S. N° 076-04-2016-04-20</span><span>Evaluación práctica</span>
+    </div>
+  </main>
+  <script src="js/protection-security-overlay.js"></script>
+  <script src="js/protection.js"></script>
+  <script>
+    async function copyStarterFile(button) {
+      const source = document.getElementById(button.dataset.copySource);
+      const text = button.querySelector("span");
+      if (!source) { showCopyStatus(button, text, "No se encontró el contenido", "copy-error"); return; }
+      const content = source.content.textContent.replace(/^\s*\n/, "").replace(/\s+$/, "");
+      try { await copyTextToClipboard(content); showCopyStatus(button, text, "Contenido copiado", "copy-success"); }
+      catch (error) { console.error(error); showCopyStatus(button, text, "Error al copiar", "copy-error"); }
+    }
+    async function copyTextToClipboard(content) {
+      if (navigator.clipboard && typeof navigator.clipboard.writeText === "function") { await navigator.clipboard.writeText(content); return; }
+      const textarea = document.createElement("textarea"); textarea.value = content; textarea.setAttribute("readonly", ""); textarea.style.position = "fixed"; textarea.style.top = "-9999px"; document.body.appendChild(textarea); textarea.select(); const copied = document.execCommand("copy"); document.body.removeChild(textarea); if (!copied) throw new Error("Copia rechazada");
+    }
+    function showCopyStatus(button, text, message, className) { button.classList.remove("copy-success", "copy-error"); button.classList.add(className); text.textContent = message; setTimeout(() => { button.classList.remove("copy-success", "copy-error"); text.textContent = "Copiar contenido"; }, 2000); }
+  </script>
+</body>
+
+</html>
