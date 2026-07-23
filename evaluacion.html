@@ -149,6 +149,14 @@
             <p>El JSON debe contener exactamente: <code>id</code>, <code>fullName</code>, <code>email</code>,
               <code>age</code>, <code>active</code> y <code>roles</code>. El campo <code>name</code> no debe existir.
             </p>
+            <p>El metodo JPA:</p>
+            <ul>
+
+              <li><code>findByAgeGreaterThanEqual</code></li>
+              <li><code>AndActiveTrue</code></li>
+              <li><code>AndDeletedFalse</code></li>
+              <li><code>OrderByFullNameAsc</code></li>
+            </ul>
             <p><strong>Capas afectadas:</strong> DTO, mapper, repository y service.</p>
           </div>
           <div class="requirement"><span class="badge">R3 · 1,00 punto</span>
